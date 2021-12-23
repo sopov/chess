@@ -1,4 +1,3 @@
-# chess
-Russian lessons Chess.com
+# Russian lessons Chess.com
 
-[https://sopov.github.io/chess/](sopov.github.io/chess/)
+All data is obtained from chess.com without using any access / privileges, using anonymous access.
