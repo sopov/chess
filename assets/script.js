@@ -73,7 +73,7 @@ $(function () {
                         class: "col-md-6"
                     }).append(
                         $("<div>").attr({
-                            class: "h-100 p-5"
+                            class: "h-100 px-5"
                         }).append(
                             $('<h2>').text(cache.title),
                             $('<p>').html(cache.description)
@@ -83,7 +83,7 @@ $(function () {
                         class: "col-md-6"
                     }).append(
                         $("<div>").attr({
-                            class: "h-100 p-5"
+                            class: "h-100 px-5"
                         }).append(
                             $("<ul>").attr({
                                 class: "nav nav-tabs",
@@ -207,7 +207,27 @@ $(function () {
             }
             if (element.questions && element.questions.length > 0) {
                 element.questions.forEach(function (question, idx) {
-                    let content = $('<xmp>').html(question);
+                    // let pgn = question.split(/\n\s*\n/)
+                    let content = $("<div>").append(
+                        $('<ct-pgn-viewer>').attr({
+                            "use-game-header": "true",
+                            "analysis-panel-session-type": "new",
+                            "analysis-panel-user": "",
+                            "analysis-panel-arrow-type": "",
+                            "move-list-persistId": "pv",
+                            "board-persistId": "pv",
+                            "move-list-folding": "true",
+                            "board-enable-markers": "true",
+                            "board-allowdrawing": "true",
+                            "board-coords-style": "four-sides",
+                            "move-list-resizable": "true",
+                            "move-list-resize-handles": "b",
+                            "move-list-useFigurineNotation": "true",
+                            "board-resizable": "true",
+                        }).html(
+                            question),
+
+                    );
                     // content = '<iframe id="8758473" allowtransparency="true" frameborder="0" style="width:100%;border:none;" src="//www.chess.com/emboard?id=8758473"></iframe>'
                     list.push(
                         t.add_tabcontent(element.id, idx, content, active)
@@ -221,6 +241,9 @@ $(function () {
     }
 
     let dom = {
+        init: function () {
+            lessons.init();
+        },
         text: {
             lesson: function (count) {
                 switch (true) {
@@ -278,8 +301,13 @@ $(function () {
         },
         sidebar: {
             elements: {
+                "base": "Основной курс",
                 "all": "Все уроки",
-                "base": "Основной курс"
+
+                "details": "О сайте"
+            },
+            info: {
+                "details": "Вся размещенная информация получена с сайта chess.com с использованием анонимного доступа, без каких либо привилигированых доступов или использования тех или иных аккаунтов. Все видео файлы проигрываются непосредственно с chess.com."
             },
             _element: undefined,
             element: function () {
@@ -294,7 +322,7 @@ $(function () {
             init: function () {
                 let t = this;
                 t.cleanup();
-                ["base", "all"].forEach(
+                ["base", "all", "details"].forEach(
                     function (e) {
                         t.add_group(e)
                     }
@@ -305,7 +333,8 @@ $(function () {
                 let t = this;
                 this.element().append(
                     t.header(t.elements[group]),
-                    t.categories(group)
+                    t.categories(group),
+                    t.text(group)
                 )
             },
             header: function (title) {
@@ -313,8 +342,18 @@ $(function () {
                     class: "sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted"
                 }).text(title)
             },
+            text: function (group) {
+                if (!(group in this.info)) {
+                    return
+                }
+                return $("<p>").attr({
+                    class: "px-3 mt-4 mb-1 text-muted"
+                }).append(this.info[group])
+            },
             categories: function (group) {
-
+                if (!(group in lessons.data)) {
+                    return
+                }
                 let t = this,
                     cats = $("<ul>").attr({
                         class: "nav flex-column"
@@ -351,6 +390,7 @@ $(function () {
             view: function (group, index) {
                 $(".nav-link.active").removeClass("active");
                 $("#menu-" + group + "-" + index).addClass("active");
+                $("#sidebarMenu.show").removeClass("show");
                 dom.category.view(group, index)
             }
         },
@@ -425,16 +465,20 @@ $(function () {
         },
         lessons: {
             view: function (element) {
-                let description = $("<div>").attr({
-                    class: "row align-items-md-stretch"
-                });
+                let title = $("<div>").append(
+                        $('<h2>').text(element.title),
+                        $('<p>').html(element.description)),
+                    description =
+                    $("<div>").attr({
+                        class: "row align-items-md-stretch  "
+                    }),
+                    descriptioncnt = 12;
 
-                let descriptioncnt = 12;
                 if (typeof element.img === typeof "") {
                     descriptioncnt = 6;
                     description.append(
                         $("<div>").attr({
-                            class: "d-md-none d-lg-block col-md-6"
+                            class: "col-md-6"
                         }).append(
                             $("<div>").attr({
                                 class: "h-100 p-5 text-white bg-dark rounded-3 img200",
@@ -454,10 +498,9 @@ $(function () {
                         class: "col-md-12 col-lg-" + descriptioncnt
                     }).append(
                         $("<div>").attr({
-                            class: "h-100 p-5 bg-light border rounded-3"
-                        }).append(
-                            $('<h2>').text(element.title),
-                            $('<p>').html(element.description)
+                            class: "h-100 p-5 bg-light border rounded-3 "
+                        }).html(
+                            title.html()
                         )
                     )
                 )
@@ -485,7 +528,17 @@ $(function () {
                 dom.main.append(
                     // $("<h1>").text(element.title),
                     // $('<hr>'),
-                    description
+                    $("<div>").attr({
+                        class: "d-none d-lg-block"
+                    }).append(
+                        description
+                    ),
+                    $("<div>").attr({
+                        class: "d-lg-none px-2"
+                    }).append(
+                        title,
+                        $("<hr>")
+                    )
                 )
 
                 element.lessons.forEach(function (id) {
@@ -495,7 +548,7 @@ $(function () {
                         }).append(
                             $('<div>').attr({
                                 id: "lesson-" + id,
-                                class: "row align-items-md-stretch lessons"
+                                class: "row align-items-md-stretch lessons py-3"
                             }).append(
                                 $("<div>").attr({
                                     class: "spinner-border m-5 downloader",
@@ -507,8 +560,6 @@ $(function () {
                                 )
                             )
                         ))
-                    // lessons.view(id)
-                    // lessons.view(id)
 
                 })
 
@@ -524,7 +575,7 @@ $(function () {
         }
     }
 
-    lessons.init();
+    dom.init()
 });
 
 {

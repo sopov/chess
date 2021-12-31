@@ -2,6 +2,7 @@ body {
   font-size: .875rem;
 }
 
+
 video {
   width: 100%
 }
@@ -15,17 +16,8 @@ video {
   height: auto;
 }
 
-.img200  {
+.img200 {
   text-align: center;
-}
-
-.img200::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-image: var(src);
-  filter: grayscale(100%);
 }
 
 .img200 img {
@@ -51,16 +43,18 @@ video {
   bottom: 0;
   /* rtl:remove */
   left: 0;
-  z-index: 100; /* Behind the navbar */
-  padding: 48px 0 0; /* Height of navbar */
+  z-index: 100;
+  /* Behind the navbar */
+  padding: 48px 0 0;
+  /* Height of navbar */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 }
-
+/* 
 @media (max-width: 767.98px) {
   .sidebar {
     top: 5rem;
   }
-}
+} */
 
 .sidebar-sticky {
   position: relative;
@@ -68,7 +62,8 @@ video {
   height: calc(100vh - 48px);
   padding-top: .5rem;
   overflow-x: hidden;
-  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  overflow-y: auto;
+  /* Scrollable contents if viewport is shorter than content. */
 }
 
 .sidebar .nav-link {
